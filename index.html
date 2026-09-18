@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>乒乓球小游戏</title>
+<style>
+body{margin:0;background:#111827;color:white;font-family:Arial,sans-serif;text-align:center}
+h1{margin:20px 0 10px}
+#score{font-size:32px;font-weight:bold}
+#message{font-size:20px;margin:10px}
+#game{width:90vw;max-width:800px;height:500px;margin:20px auto;background:#16803c;border:5px solid white;position:relative;overflow:hidden;touch-action:none}
+.net{position:absolute;left:50%;top:0;width:4px;height:100%;background:white;transform:translateX(-50%)}
+.paddle{position:absolute;width:18px;height:100px;background:white;border-radius:8px}
+#player{left:15px;top:200px}
+#computer{right:15px;top:200px}
+#ball{position:absolute;width:22px;height:22px;background:white;border-radius:50%;left:50%;top:50%}
+button{padding:12px 25px;font-size:18px;border:0;border-radius:8px;cursor:pointer;margin:4px}
+</style>
+</head>
+<body>
+<h1>🏓 乒乓球小游戏</h1>
+<div id="score">0 : 0</div>
+<div id="message">按开始游戏</div>
+<div id="game">
+  <div class="net"></div>
+  <div id="player" class="paddle"></div>
+  <div id="computer" class="paddle"></div>
+  <div id="ball"></div>
+</div>
+<button onclick="startGame()">开始游戏</button>
+<button onclick="resetGame()">重新开始</button>
+<script>
+const game=document.getElementById("game"),player=document.getElementById("player"),computer=document.getElementById("computer"),ball=document.getElementById("ball"),scoreText=document.getElementById("score"),message=document.getElementById("message");
+let playerY=200,computerY=200,ballX=390,ballY=240,ballSpeedX=5,ballSpeedY=3,playerScore=0,computerScore=0,playing=false;
+function startGame(){if(playing)return;playing=true;message.textContent="游戏开始！";gameLoop()}
+function resetGame(){playerScore=0;computerScore=0;playerY=200;computerY=200;ballX=390;ballY=240;ballSpeedX=5;ballSpeedY=3;playing=false;updateScreen();message.textContent="按开始游戏"}
+function updateScreen(){player.style.top=playerY+"px";computer.style.top=computerY+"px";ball.style.left=ballX+"px";ball.style.top=ballY+"px";scoreText.textContent=playerScore+" : "+computerScore}
+function gameLoop(){
+ if(!playing)return;
+ ballX+=ballSpeedX;ballY+=ballSpeedY;
+ if(ballY<=0||ballY>=game.clientHeight-22)ballSpeedY*=-1;
+ if(ballX<=35&&ballY+22>=playerY&&ballY<=playerY+100)ballSpeedX=Math.abs(ballSpeedX)+.3;
+ if(ballX>=game.clientWidth-55&&ballY+22>=computerY&&ballY<=computerY+100)ballSpeedX=-Math.abs(ballSpeedX)-.3;
+ const center=computerY+50;
+ if(center<ballY)computerY+=3;else computerY-=3;
+ computerY=Math.max(0,Math.min(game.clientHeight-100,computerY));
+ if(ballX<-30){computerScore++;resetBall()}
+ if(ballX>game.clientWidth+30){playerScore++;resetBall()}
+ if(playerScore>=11||computerScore>=11){playing=false;message.textContent=playerScore>=11?"🎉 你赢了！":"电脑赢了，再来一次！"}
+ updateScreen();
+ if(playing)requestAnimationFrame(gameLoop)
+}
+function resetBall(){ballX=game.clientWidth/2;ballY=game.clientHeight/2;ballSpeedX=playerScore>computerScore?-5:5;ballSpeedY=Math.random()>.5?3:-3}
+game.addEventListener("pointermove",e=>{
+ const r=game.getBoundingClientRect();
+ playerY=e.clientY-r.top-50;
+ playerY=Math.max(0,Math.min(game.clientHeight-100,playerY));
+ updateScreen()
+});
+updateScreen();
+</script>
+</body>
+</html>
