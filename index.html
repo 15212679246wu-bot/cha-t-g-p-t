@@ -1,59 +1,53 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Browser AI 控制台</title>
-<style>
-*{box-sizing:border-box}body{margin:0;background:#0b1020;color:#e8edf7;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-.wrap{max-width:1100px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px}
-h1{margin:0;font-size:25px}.status{padding:8px 12px;border:1px solid #33405c;border-radius:999px;font-size:13px;color:#f5c76a;background:#151c2f}
-.grid{display:grid;grid-template-columns:1.45fr .75fr;gap:18px}.card{background:#11182b;border:1px solid #27324b;border-radius:16px;padding:18px;box-shadow:0 10px 30px #0003}
-.label{font-size:13px;color:#8f9bb3;margin-bottom:9px}.browser{height:390px;background:#f3f5f8;border-radius:12px;overflow:hidden;color:#182033}
-.bar{height:42px;background:#dfe4eb;display:flex;align-items:center;gap:8px;padding:0 12px}.dot{width:9px;height:9px;border-radius:50%;background:#aeb7c5}.url{flex:1;background:white;border-radius:7px;padding:7px 10px;font-size:12px;color:#687286}
-.preview{height:348px;display:flex;align-items:center;justify-content:center;text-align:center;padding:30px}.preview h2{margin:0 0 8px;font-size:23px}.preview p{margin:0;color:#667085}
-textarea{width:100%;min-height:115px;resize:vertical;border:1px solid #34415d;border-radius:10px;background:#0b1120;color:#fff;padding:13px;font:inherit;outline:none}textarea:focus{border-color:#7187c7}
-button{border:0;border-radius:10px;padding:11px 16px;font-weight:600;cursor:pointer}.primary{background:#6d8cff;color:white}.secondary{background:#27324b;color:#e8edf7}.danger{background:#43242b;color:#ffb7c0}.buttons{display:flex;gap:9px;margin-top:10px;flex-wrap:wrap}
-.item{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #263149;font-size:14px}.item:last-child{border:0}.ok{color:#7de2a3}.warn{color:#f5c76a}.muted{color:#8f9bb3}
-.log{height:178px;overflow:auto;background:#0a0f1c;border-radius:10px;padding:12px;margin-top:12px;font:12px ui-monospace,SFMono-Regular,monospace;color:#aeb9cf;white-space:pre-wrap}
-.note{font-size:12px;color:#7f8ba3;line-height:1.6;margin-top:12px}
-@media(max-width:760px){.wrap{padding:14px}.grid{grid-template-columns:1fr}.browser{height:330px}.preview{height:288px}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>星跃岛 · 五重冒险</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Noto+Sans+SC:wght@500;700;900&display=swap');
+    :root { --ink:#321b57; --violet:#7549ee; --yellow:#ffe75c; --pink:#ff5f9e; --cyan:#49e3f2; }
+    * { box-sizing:border-box; } body { margin:0; min-width:320px; color:var(--ink); font-family:"Noto Sans SC",sans-serif; background:#7145ed; overflow-x:hidden; }
+    .game { min-height:100vh; position:relative; overflow:hidden; background:linear-gradient(180deg,#74e8ff 0%,#b8efff 61%,#9ce5c6 61%,#5acb91 100%); }
+    .sky-orb { position:absolute; width:clamp(170px,23vw,320px); aspect-ratio:1; background:radial-gradient(circle at 34% 30%,#fffbd9 0 8%,#ffe657 10% 51%,#ffbc3d 53%); border-radius:50%; top:88px; right:8%; box-shadow:0 0 0 13px #ffffff3b,0 0 70px #ffe846aa; }
+    .cloud { position:absolute; width:180px; height:52px; background:#fff; border-radius:40px; opacity:.88; filter:drop-shadow(0 9px 0 #5fc9e4aa); } .cloud:before,.cloud:after { content:""; position:absolute; background:#fff; border-radius:50%; } .cloud:before { width:75px;height:75px;left:25px;bottom:0; } .cloud:after { width:58px;height:58px;right:26px;bottom:0; }
+    .c1{top:190px;left:9%;transform:scale(.65)} .c2{top:310px;right:25%;transform:scale(.42)} .c3{top:105px;left:42%;transform:scale(.34)}
+    header { position:relative; z-index:10; max-width:1300px; margin:auto; padding:22px clamp(18px,4vw,58px); display:flex; align-items:center; justify-content:space-between; gap:18px; }
+    .brand { display:flex; align-items:center; gap:11px; font-family:"Baloo 2","Noto Sans SC",sans-serif; font-weight:800; font-size:clamp(21px,2.2vw,31px); color:white; text-shadow:0 3px 0 #4a2aa0; letter-spacing:.5px; } .brand-mark{width:41px;height:41px;border:4px solid white;border-radius:14px 14px 18px 18px;background:linear-gradient(135deg,#ff72a9,#ffb957);box-shadow:0 4px 0 #4a2aa0;position:relative}.brand-mark:after{content:"✦";position:absolute;inset:0;display:grid;place-items:center;color:white;font-size:25px}
+    .hud { display:flex; gap:10px; align-items:center; }.pill { border:3px solid #fff; border-radius:20px; padding:7px 13px; background:#ffffffc9; font-weight:900; font-size:13px; box-shadow:0 4px 0 #4e83a6; color:#3d276d; white-space:nowrap; }.heart{color:#ff4d8e;font-size:17px;letter-spacing:1px}
+    main { position:relative; z-index:2; max-width:1300px; margin:0 auto; padding:clamp(16px,3vw,42px) clamp(18px,4vw,58px) 0; display:grid; grid-template-columns:minmax(300px,.9fr) minmax(440px,1.3fr); align-items:center; gap:22px; }
+    .copy { padding-bottom:62px; } .eyebrow{display:inline-flex;align-items:center;gap:7px;background:#fff;border:3px solid #4b2b86;border-radius:999px;padding:7px 13px;font-weight:900;font-size:13px;box-shadow:0 4px 0 #4b2b86}.spark{color:#ff6b9c;font-size:20px;line-height:.6}
+    h1 { font-family:"Baloo 2","Noto Sans SC",sans-serif; font-size:clamp(48px,6vw,88px); line-height:.91; margin:18px 0 16px; font-weight:800; letter-spacing:-2px; color:#fff; text-shadow:0 5px 0 #5730ae,0 9px 0 #5730ae44; } h1 span{color:#ffdf55;text-shadow:0 5px 0 #d77144,0 9px 0 #87346377}
+    .intro{font-size:16px;line-height:1.8;max-width:455px;margin:0 0 24px;font-weight:700;color:#3b2870}.start { border:3px solid #4c288d; border-radius:18px; padding:14px 22px; background:linear-gradient(180deg,#ff75aa,#ff4f8d); color:#fff; box-shadow:0 6px 0 #4c288d; font:900 18px "Noto Sans SC",sans-serif; cursor:pointer; transition:.18s transform,.18s box-shadow; }.start:hover{transform:translateY(3px);box-shadow:0 3px 0 #4c288d}.start:active{transform:translateY(6px);box-shadow:none}.start small{font-size:13px;opacity:.85;margin-left:8px}
+    .scene { height:525px; position:relative; min-width:0; filter:drop-shadow(0 20px 18px #315a6870); } .island { position:absolute; inset:64px 0 25px; border:5px solid #3d3782; border-radius:48% 52% 46% 54% / 42% 45% 55% 58%; background:linear-gradient(145deg,#b5f878 0 23%,#70e983 24% 55%,#24bb91 56% 72%,#3378d8 73%); box-shadow:inset -17px -24px 0 #1679b8,inset 16px 17px 0 #d9ff9b,0 13px 0 #3d3782; transform:rotate(-4deg); overflow:hidden; }
+    .island:before{content:"";position:absolute;width:65%;height:21%;left:13%;top:16%;background:#e9ff91;border-radius:50%;transform:rotate(14deg);box-shadow:30px 18px 0 #83ec77}.island:after{content:"";position:absolute;right:11%;top:8%;width:77px;height:130px;background:linear-gradient(90deg,#ffd45a 0 33%,#fa9054 34% 66%,#ffce52 67%);border:4px solid #54357e;border-radius:44px 44px 16px 16px;box-shadow:17px 29px 0 -6px #6e3e7e}
+    .mountain{position:absolute;bottom:55px;right:10%;width:235px;height:225px;background:linear-gradient(135deg,#9e76ff,#684ddd 55%,#4c34bb);clip-path:polygon(50% 0,100% 100%,0 100%);filter:drop-shadow(5px 7px 0 #3f3582)}.mountain:after{content:"";position:absolute;top:12px;left:81px;width:74px;height:66px;background:#f5ffff;clip-path:polygon(50% 0,100% 100%,74% 83%,59% 100%,37% 78%,0 100%)}
+    .tree{position:absolute;bottom:104px;left:9%;width:29px;height:105px;background:#755047;border:4px solid #4a3473;border-radius:15px;transform:rotate(8deg)}.tree:after{content:"";position:absolute;width:108px;height:90px;bottom:65px;left:-42px;border-radius:50% 50% 42% 48%;background:#ff6ca7;border:4px solid #4a3473;box-shadow:17px 13px 0 #ea4c8c}.tree + .tree{bottom:119px;left:32%;transform:scale(.7) rotate(-12deg);filter:hue-rotate(82deg)}
+    .platform { position:absolute; border:4px solid #50387a; border-radius:12px; background:repeating-linear-gradient(90deg,#ffcb58 0 19px,#ffec7d 20px 33px); box-shadow:0 8px 0 #be6b43; }.p1{width:126px;height:36px;left:22%;bottom:120px}.p2{width:106px;height:32px;right:15%;bottom:196px}.p3{width:75px;height:28px;left:49%;bottom:264px}
+    .coin{position:absolute;width:33px;height:33px;border:4px solid #9a5b30;border-radius:50%;background:radial-gradient(circle at 36% 32%,#fff5a4 0 9%,#ffe452 10% 58%,#ff9d39 60%);box-shadow:0 4px 0 #b85f3b}.coin:after{content:"★";color:#fff1a2;position:absolute;inset:0;display:grid;place-items:center;font-size:18px}.coin.one{left:34%;bottom:175px}.coin.two{right:24%;bottom:249px}.coin.three{left:57%;bottom:323px}
+    .hero { position:absolute; bottom:82px; left:39%; width:104px; height:144px; z-index:3; animation:bob 2.1s ease-in-out infinite; }.cap{position:absolute;width:103px;height:46px;background:#ff4e72;border:4px solid #4b347a;border-radius:50% 52% 16px 17px;top:0;left:0}.cap:after{content:"S";position:absolute;width:37px;height:37px;top:6px;left:31px;border-radius:50%;background:#fff6d7;border:3px solid #4b347a;color:#ff5274;font:bold 20px "Baloo 2";display:grid;place-items:center}.face{position:absolute;width:77px;height:70px;top:30px;left:14px;border:4px solid #4b347a;border-radius:38% 42% 42% 38%;background:#ffc99f}.eye{position:absolute;top:27px;width:11px;height:20px;border-radius:50%;background:#392955}.eye.l{left:25px}.eye.r{right:25px}.body{position:absolute;width:82px;height:70px;bottom:2px;left:12px;background:linear-gradient(90deg,#39d6df 0 50%,#24afb8 50%);border:4px solid #4b347a;border-radius:24px 24px 16px 16px}.body:after{content:"";position:absolute;width:50px;height:40px;left:11px;top:-16px;border:7px solid #ff6b83;border-bottom:0;border-radius:15px 15px 0 0}.shoe{position:absolute;bottom:-5px;width:45px;height:19px;background:#5b3a7f;border:4px solid #3e2c69;border-radius:50% 50% 12px 12px}.shoe.l{left:2px}.shoe.r{right:0}
+    .level-dock{position:absolute;z-index:5;left:50%;bottom:24px;transform:translateX(-50%);width:min(890px,calc(100% - 36px));background:#ffffffdf;border:4px solid #4c3281;border-radius:25px;padding:12px 16px;box-shadow:0 8px 0 #4c3281;display:flex;align-items:center;gap:12px}.dock-label{font-weight:900;font-size:13px;white-space:nowrap}.levels{display:flex;justify-content:space-between;gap:10px;flex:1}.level{border:0;border-radius:14px;background:transparent;color:#6c5b83;min-width:62px;padding:6px;cursor:pointer;font:900 12px "Noto Sans SC";transition:.2s}.level b{display:block;margin:auto auto 4px;width:31px;height:31px;border-radius:50%;background:#ded3f4;color:#75618d;display:grid;place-items:center;border:2px solid #b0a1d2}.level.active{color:#5a2779;background:#ffe25b}.level.active b{background:#ff638f;color:#fff;border-color:#4d2b7b;box-shadow:0 3px 0 #4d2b7b}.level:hover{transform:translateY(-2px)}.state{font-size:12px;font-weight:900;color:#ff538c;white-space:nowrap}
+    .floating-star{position:absolute;color:#fff;filter:drop-shadow(0 3px 0 #6443a0);font-size:38px;animation:twinkle 1.6s ease-in-out infinite}.s1{top:115px;left:31%}.s2{top:233px;right:7%;font-size:26px;animation-delay:.6s}.s3{top:355px;left:5%;font-size:23px;animation-delay:1s}
+    @keyframes bob{50%{transform:translateY(-13px) rotate(2deg)}}@keyframes twinkle{50%{transform:scale(.72) rotate(17deg);opacity:.6}}
+    @media(max-width:800px){header{padding-bottom:4px}.hud .pill:last-child{display:none}main{grid-template-columns:1fr;text-align:center;padding-top:16px}.copy{padding-bottom:0}.intro{margin-inline:auto}.scene{height:420px;margin-top:-22px}.sky-orb{top:86px;right:-35px}.level-dock{bottom:13px}.dock-label,.state{display:none}.level{min-width:0;padding:5px 1px;font-size:10px}.levels{gap:4px}.island{inset:48px 0 18px}.mountain{transform:scale(.78);transform-origin:bottom right}.hero{transform:scale(.82);transform-origin:bottom;left:37%}.tree{transform:scale(.75) rotate(8deg)}h1{font-size:56px}}
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top"><div><h1>🤖 Browser AI 控制台</h1><div class="muted">为 BrowserSkill 准备的浏览器控制界面</div></div><div class="status" id="overall">● 尚未连接</div></div>
-  <div class="grid">
-    <section class="card">
-      <div class="label">浏览器预览</div>
-      <div class="browser"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="url" id="url">等待浏览器连接…</div></div><div class="preview"><div><h2 id="pageTitle">BrowserSkill</h2><p id="pageText">当前是控制台预览。连接电脑上的 BrowserSkill 后，这里可以作为浏览器控制区域。</p></div></div></div>
-      <div class="label" style="margin-top:18px">给 AI 的指令</div>
-      <textarea id="command" placeholder="例如：打开 example.com，然后告诉我网页标题"></textarea>
-      <div class="buttons"><button class="primary" onclick="runCommand()">▶ 执行指令</button><button class="secondary" onclick="document.getElementById('command').value=''">清空</button><button class="danger" onclick="stopCommand()">■ 停止</button></div>
-      <div class="log" id="log">[系统] 控制台已启动。
-[系统] BrowserSkill：等待连接。
-[提示] 现在只有 iPad，因此这里先提供控制界面，不会假装已经控制 Safari。</div>
-    </section>
-    <aside class="card">
-      <div class="label">连接状态</div>
-      <div class="item"><span>控制台</span><span class="ok">● 正常</span></div>
-      <div class="item"><span>BrowserSkill</span><span class="warn" id="bsk">● 未连接</span></div>
-      <div class="item"><span>浏览器</span><span class="muted" id="browser">等待连接</span></div>
-      <div class="item"><span>AI Agent</span><span class="muted">等待接入</span></div>
-      <div class="label" style="margin-top:22px">准备工作</div>
-      <div class="item"><span>① 控制界面</span><span class="ok">完成</span></div>
-      <div class="item"><span>② BrowserSkill</span><span class="ok">已加入项目</span></div>
-      <div class="item"><span>③ 本地 bsk</span><span class="warn">需要电脑</span></div>
-      <div class="item"><span>④ 浏览器扩展</span><span class="warn">需要电脑</span></div>
-      <div class="note">等你有 Windows、Mac 或 Linux 电脑后，就可以把本界面接到真正的 bsk，让 AI 执行浏览器操作。</div>
-    </aside>
+  <div class="game">
+    <div class="sky-orb"></div><div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div><div class="floating-star s1">✦</div><div class="floating-star s2">✦</div><div class="floating-star s3">✦</div>
+    <header><div class="brand"><i class="brand-mark"></i>星跃岛 <small>STAR HOP</small></div><div class="hud"><div class="pill heart">♥ ♥ ♥</div><div class="pill">✦ 1,250</div><div class="pill">世界 1-1</div></div></header>
+    <main>
+      <section class="copy"><div class="eyebrow"><span class="spark">✦</span> 多巴胺冒险，马上出发！</div><h1>跳进<br><span>闪耀新世界</span></h1><p class="intro">和小星一起穿过糖果森林、云端城堡与海底遗迹。收集星星，解锁五个充满惊喜的梦幻关卡！</p><button class="start" id="start">开始冒险 <small>SPACE</small></button></section>
+      <section class="scene" aria-label="星跃岛游戏场景"><div class="island"></div><div class="mountain"></div><div class="tree"></div><div class="tree"></div><div class="platform p1"></div><div class="platform p2"></div><div class="platform p3"></div><div class="coin one"></div><div class="coin two"></div><div class="coin three"></div><div class="hero"><div class="cap"></div><div class="face"><i class="eye l"></i><i class="eye r"></i></div><div class="body"></div><i class="shoe l"></i><i class="shoe r"></i></div></section>
+    </main>
+    <nav class="level-dock" aria-label="选择关卡"><div class="dock-label">选择关卡</div><div class="levels"><button class="level active" data-level="1"><b>1</b>彩虹起点</button><button class="level" data-level="2"><b>2</b>糖果森林</button><button class="level" data-level="3"><b>3</b>泡泡海湾</button><button class="level" data-level="4"><b>4</b>云端王国</button><button class="level" data-level="5"><b>5</b>星光城堡</button></div><div class="state" id="state">正在冒险</div></nav>
   </div>
-</div>
-<script>
-const log=document.getElementById("log");
-function addLog(s){log.textContent+="\n"+s;log.scrollTop=log.scrollHeight}
-function runCommand(){const v=document.getElementById("command").value.trim();if(!v)return;addLog("[用户] "+v);addLog("[AI] 当前设备是 iPad，尚未连接 BrowserSkill，暂不能执行真实浏览器操作。");}
-function stopCommand(){addLog("[系统] 已停止当前指令（演示模式）。")}
-</script>
+  <script>
+    const levels = document.querySelectorAll('.level'); const state = document.getElementById('state'); const start = document.getElementById('start');
+    function choose(button){ levels.forEach(item=>item.classList.toggle('active',item===button)); state.textContent=`第 ${button.dataset.level} 关已选择`; }
+    levels.forEach(button=>button.addEventListener('click',()=>choose(button)));
+    function begin(){ start.innerHTML='冒险开始！ <small>✦ GO!</small>'; state.textContent='小星正在出发'; document.querySelector('.hero').style.animation='bob .55s ease-in-out 4'; setTimeout(()=>start.innerHTML='继续冒险 <small>SPACE</small>',2200); }
+    start.addEventListener('click',begin); window.addEventListener('keydown',event=>{if(event.code==='Space'){event.preventDefault();begin();}});
+  </script>
 </body>
 </html>
