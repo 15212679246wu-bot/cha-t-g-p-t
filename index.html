@@ -3,62 +3,57 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>乒乓球小游戏</title>
+<title>Browser AI 控制台</title>
 <style>
-body{margin:0;background:#111827;color:white;font-family:Arial,sans-serif;text-align:center}
-h1{margin:20px 0 10px}
-#score{font-size:32px;font-weight:bold}
-#message{font-size:20px;margin:10px}
-#game{width:90vw;max-width:800px;height:500px;margin:20px auto;background:#16803c;border:5px solid white;position:relative;overflow:hidden;touch-action:none}
-.net{position:absolute;left:50%;top:0;width:4px;height:100%;background:white;transform:translateX(-50%)}
-.paddle{position:absolute;width:18px;height:100px;background:white;border-radius:8px}
-#player{left:15px;top:200px}
-#computer{right:15px;top:200px}
-#ball{position:absolute;width:22px;height:22px;background:white;border-radius:50%;left:50%;top:50%}
-button{padding:12px 25px;font-size:18px;border:0;border-radius:8px;cursor:pointer;margin:4px}
+*{box-sizing:border-box}body{margin:0;background:#0b1020;color:#e8edf7;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.wrap{max-width:1100px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px}
+h1{margin:0;font-size:25px}.status{padding:8px 12px;border:1px solid #33405c;border-radius:999px;font-size:13px;color:#f5c76a;background:#151c2f}
+.grid{display:grid;grid-template-columns:1.45fr .75fr;gap:18px}.card{background:#11182b;border:1px solid #27324b;border-radius:16px;padding:18px;box-shadow:0 10px 30px #0003}
+.label{font-size:13px;color:#8f9bb3;margin-bottom:9px}.browser{height:390px;background:#f3f5f8;border-radius:12px;overflow:hidden;color:#182033}
+.bar{height:42px;background:#dfe4eb;display:flex;align-items:center;gap:8px;padding:0 12px}.dot{width:9px;height:9px;border-radius:50%;background:#aeb7c5}.url{flex:1;background:white;border-radius:7px;padding:7px 10px;font-size:12px;color:#687286}
+.preview{height:348px;display:flex;align-items:center;justify-content:center;text-align:center;padding:30px}.preview h2{margin:0 0 8px;font-size:23px}.preview p{margin:0;color:#667085}
+textarea{width:100%;min-height:115px;resize:vertical;border:1px solid #34415d;border-radius:10px;background:#0b1120;color:#fff;padding:13px;font:inherit;outline:none}textarea:focus{border-color:#7187c7}
+button{border:0;border-radius:10px;padding:11px 16px;font-weight:600;cursor:pointer}.primary{background:#6d8cff;color:white}.secondary{background:#27324b;color:#e8edf7}.danger{background:#43242b;color:#ffb7c0}.buttons{display:flex;gap:9px;margin-top:10px;flex-wrap:wrap}
+.item{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #263149;font-size:14px}.item:last-child{border:0}.ok{color:#7de2a3}.warn{color:#f5c76a}.muted{color:#8f9bb3}
+.log{height:178px;overflow:auto;background:#0a0f1c;border-radius:10px;padding:12px;margin-top:12px;font:12px ui-monospace,SFMono-Regular,monospace;color:#aeb9cf;white-space:pre-wrap}
+.note{font-size:12px;color:#7f8ba3;line-height:1.6;margin-top:12px}
+@media(max-width:760px){.wrap{padding:14px}.grid{grid-template-columns:1fr}.browser{height:330px}.preview{height:288px}}
 </style>
 </head>
 <body>
-<h1>🏓 乒乓球小游戏</h1>
-<div id="score">0 : 0</div>
-<div id="message">按开始游戏</div>
-<div id="game">
-  <div class="net"></div>
-  <div id="player" class="paddle"></div>
-  <div id="computer" class="paddle"></div>
-  <div id="ball"></div>
+<div class="wrap">
+  <div class="top"><div><h1>🤖 Browser AI 控制台</h1><div class="muted">为 BrowserSkill 准备的浏览器控制界面</div></div><div class="status" id="overall">● 尚未连接</div></div>
+  <div class="grid">
+    <section class="card">
+      <div class="label">浏览器预览</div>
+      <div class="browser"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="url" id="url">等待浏览器连接…</div></div><div class="preview"><div><h2 id="pageTitle">BrowserSkill</h2><p id="pageText">当前是控制台预览。连接电脑上的 BrowserSkill 后，这里可以作为浏览器控制区域。</p></div></div></div>
+      <div class="label" style="margin-top:18px">给 AI 的指令</div>
+      <textarea id="command" placeholder="例如：打开 example.com，然后告诉我网页标题"></textarea>
+      <div class="buttons"><button class="primary" onclick="runCommand()">▶ 执行指令</button><button class="secondary" onclick="document.getElementById('command').value=''">清空</button><button class="danger" onclick="stopCommand()">■ 停止</button></div>
+      <div class="log" id="log">[系统] 控制台已启动。
+[系统] BrowserSkill：等待连接。
+[提示] 现在只有 iPad，因此这里先提供控制界面，不会假装已经控制 Safari。</div>
+    </section>
+    <aside class="card">
+      <div class="label">连接状态</div>
+      <div class="item"><span>控制台</span><span class="ok">● 正常</span></div>
+      <div class="item"><span>BrowserSkill</span><span class="warn" id="bsk">● 未连接</span></div>
+      <div class="item"><span>浏览器</span><span class="muted" id="browser">等待连接</span></div>
+      <div class="item"><span>AI Agent</span><span class="muted">等待接入</span></div>
+      <div class="label" style="margin-top:22px">准备工作</div>
+      <div class="item"><span>① 控制界面</span><span class="ok">完成</span></div>
+      <div class="item"><span>② BrowserSkill</span><span class="ok">已加入项目</span></div>
+      <div class="item"><span>③ 本地 bsk</span><span class="warn">需要电脑</span></div>
+      <div class="item"><span>④ 浏览器扩展</span><span class="warn">需要电脑</span></div>
+      <div class="note">等你有 Windows、Mac 或 Linux 电脑后，就可以把本界面接到真正的 bsk，让 AI 执行浏览器操作。</div>
+    </aside>
+  </div>
 </div>
-<button onclick="startGame()">开始游戏</button>
-<button onclick="resetGame()">重新开始</button>
 <script>
-const game=document.getElementById("game"),player=document.getElementById("player"),computer=document.getElementById("computer"),ball=document.getElementById("ball"),scoreText=document.getElementById("score"),message=document.getElementById("message");
-let playerY=200,computerY=200,ballX=390,ballY=240,ballSpeedX=5,ballSpeedY=3,playerScore=0,computerScore=0,playing=false;
-function startGame(){if(playing)return;playing=true;message.textContent="游戏开始！";gameLoop()}
-function resetGame(){playerScore=0;computerScore=0;playerY=200;computerY=200;ballX=390;ballY=240;ballSpeedX=5;ballSpeedY=3;playing=false;updateScreen();message.textContent="按开始游戏"}
-function updateScreen(){player.style.top=playerY+"px";computer.style.top=computerY+"px";ball.style.left=ballX+"px";ball.style.top=ballY+"px";scoreText.textContent=playerScore+" : "+computerScore}
-function gameLoop(){
- if(!playing)return;
- ballX+=ballSpeedX;ballY+=ballSpeedY;
- if(ballY<=0||ballY>=game.clientHeight-22)ballSpeedY*=-1;
- if(ballX<=35&&ballY+22>=playerY&&ballY<=playerY+100)ballSpeedX=Math.abs(ballSpeedX)+.3;
- if(ballX>=game.clientWidth-55&&ballY+22>=computerY&&ballY<=computerY+100)ballSpeedX=-Math.abs(ballSpeedX)-.3;
- const center=computerY+50;
- if(center<ballY)computerY+=3;else computerY-=3;
- computerY=Math.max(0,Math.min(game.clientHeight-100,computerY));
- if(ballX<-30){computerScore++;resetBall()}
- if(ballX>game.clientWidth+30){playerScore++;resetBall()}
- if(playerScore>=11||computerScore>=11){playing=false;message.textContent=playerScore>=11?"🎉 你赢了！":"电脑赢了，再来一次！"}
- updateScreen();
- if(playing)requestAnimationFrame(gameLoop)
-}
-function resetBall(){ballX=game.clientWidth/2;ballY=game.clientHeight/2;ballSpeedX=playerScore>computerScore?-5:5;ballSpeedY=Math.random()>.5?3:-3}
-game.addEventListener("pointermove",e=>{
- const r=game.getBoundingClientRect();
- playerY=e.clientY-r.top-50;
- playerY=Math.max(0,Math.min(game.clientHeight-100,playerY));
- updateScreen()
-});
-updateScreen();
+const log=document.getElementById("log");
+function addLog(s){log.textContent+="\n"+s;log.scrollTop=log.scrollHeight}
+function runCommand(){const v=document.getElementById("command").value.trim();if(!v)return;addLog("[用户] "+v);addLog("[AI] 当前设备是 iPad，尚未连接 BrowserSkill，暂不能执行真实浏览器操作。");}
+function stopCommand(){addLog("[系统] 已停止当前指令（演示模式）。")}
 </script>
 </body>
 </html>
