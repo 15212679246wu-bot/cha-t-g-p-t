@@ -1,0 +1,3 @@
+[submodule "BrowserSkill"]
+	path = BrowserSkill
+	url = https://github.com/Tencent/BrowserSkill.git
